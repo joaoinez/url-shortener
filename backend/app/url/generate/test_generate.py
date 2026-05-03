@@ -6,7 +6,7 @@ from app.url.generate.router import GenerateURLResponse
 
 
 def test_generate_url_happy_path(client: TestClient):
-    response = client.post("/api/url", json={"url": "https://example.com"})
+    response = client.post("/url", json={"url": "https://example.com"})
 
     assert response.status_code == 200
 
@@ -16,7 +16,7 @@ def test_generate_url_happy_path(client: TestClient):
 
 
 def test_generate_url_without_body(client: TestClient):
-    response = client.post("/api/url")
+    response = client.post("/url")
 
     assert response.status_code == 422
 
@@ -28,11 +28,11 @@ def test_generate_url_without_body(client: TestClient):
         "not a url",
         "",
         "javascript:alert(1)",
-        # "https://google", FIX: This URL should be considered invalid
+        "https://google",
     ],
 )
 def test_generate_url_invalid_url(client: TestClient, url: str):
-    response = client.post("/api/url", json={"url": url})
+    response = client.post("/url", json={"url": url})
 
     assert response.status_code == 422
 
@@ -43,7 +43,7 @@ def test_generate_url_collision(client: TestClient, mocker: MockerFixture):
         side_effect=["some-token", "some-token", "different-token"],
     )
 
-    response = client.post("/api/url", json={"url": "https://example.com"})
+    response = client.post("/url", json={"url": "https://example.com"})
 
     assert response.status_code == 200
 
@@ -51,7 +51,7 @@ def test_generate_url_collision(client: TestClient, mocker: MockerFixture):
 
     assert data.token == "some-token"
 
-    collision_response = client.post("/api/url", json={"url": "https://another.com"})
+    collision_response = client.post("/url", json={"url": "https://another.com"})
 
     assert collision_response.status_code == 200
 

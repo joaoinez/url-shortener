@@ -3,7 +3,8 @@ import { createFileRoute } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
 import type { ChangeEventHandler } from "react"
 import { cn } from "#/utils/cn"
-import { API_BASE_URL, generateURL } from "#/fetch/generateUrl"
+import { generateURL } from "#/fetch/generateUrl"
+import { API_BASE_URL } from "#/constants"
 
 export const Route = createFileRoute("/")({ component: Home })
 
@@ -42,6 +43,8 @@ function Home() {
         setURL(clipText.replace(protocolRegex, ""))
       }
     })
+
+    console.log("API_BASE_URL: ", API_BASE_URL)
   }, [])
 
   return (

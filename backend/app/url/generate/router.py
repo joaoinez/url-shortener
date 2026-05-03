@@ -5,7 +5,7 @@ from app.dependencies import DBSession
 from app.url.generate.service import generate_token
 from app.utils.validate_url import validate_url
 
-router = APIRouter(prefix="/api")
+router = APIRouter()
 
 
 class GenerateURLBody(BaseModel):

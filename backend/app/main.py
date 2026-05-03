@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -5,10 +7,13 @@ from app.dependencies import lifespan
 from app.docs import docs_router
 from app.url.main import url_router
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(
+    lifespan=lifespan,
+    openapi_prefix="/api" if os.environ.get("APP_ENV") == "production" else "",
+)
 
 origins = [
-    "http://localhost:3000",
+    "http://localhost",
 ]
 
 app.add_middleware(

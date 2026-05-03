@@ -8,10 +8,14 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 import app.url.models  # pyright: ignore[reportUnusedImport]  # noqa: F401
 from alembic import context
 from app.db.main import Base
+from app.settings import Settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+settings = Settings()  # pyright: ignore[reportCallIssue]
+config.set_main_option("sqlalchemy.url", settings.db_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

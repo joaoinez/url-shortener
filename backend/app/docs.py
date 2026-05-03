@@ -1,3 +1,4 @@
+import os
 from typing import cast
 
 from fastapi import APIRouter, FastAPI, Request
@@ -9,7 +10,8 @@ docs_router = APIRouter(include_in_schema=False)
 @docs_router.get("/scalar")
 async def scalar_html(request: Request):
     app = cast(FastAPI, request.app)
+    url = app.openapi_url
 
     return get_scalar_api_reference(
-        openapi_url=app.openapi_url,
+        openapi_url=f"/api{url}" if os.environ.get("APP_ENV") == "production" else url,
     )

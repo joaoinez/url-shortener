@@ -5,8 +5,8 @@ from typing import Annotated
 from fastapi import Depends, FastAPI
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
-from app.config import Settings
 from app.db.main import create_db_engine, create_db_session_maker
+from app.settings import Settings
 
 # TODO: Make this a class
 engine: AsyncEngine | None = None

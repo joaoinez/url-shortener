@@ -3,10 +3,10 @@ import pytest_asyncio
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from app.config import Settings
 from app.db.main import Base
 from app.dependencies import get_db_session, get_settings
 from app.main import app
+from app.settings import Settings
 
 TEST_DB_URL = "sqlite+aiosqlite:///test.db"
 

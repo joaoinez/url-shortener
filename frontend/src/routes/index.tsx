@@ -2,9 +2,12 @@ import { useMutation } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
 import type { ChangeEventHandler } from "react"
-import { cn } from "#/utils/cn"
 import { generateURL } from "#/fetch/generateUrl"
 import { API_BASE_URL } from "#/constants"
+import ColorBends from "#/ui/ColorBends"
+import GlassButton from "#/ui/GlassButton"
+import ShortURL from "#/components/ShortURL"
+import URLBar from "#/components/URLBar"
 
 export const Route = createFileRoute("/")({ component: Home })
 
@@ -31,7 +34,7 @@ function Home() {
   }
 
   const handleGenerateURL = () =>
-    generateURLMutation.mutate(`${protocol}${url}`)
+    generateURLMutation.mutate(`${protocol}${url.trim()}`)
 
   useEffect(() => {
     navigator.clipboard.readText().then((clipText) => {
@@ -48,51 +51,50 @@ function Home() {
   }, [])
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gray-900">
-      <h1 className="mb-8 text-3xl text-white">URL Shortener</h1>
-
-      <div
-        className={cn(
-          "flex w-1/2 max-w-5xl items-center rounded-full bg-gray-50 pl-4",
-          generateURLMutation.error && "outline-2 outline-red-500",
-        )}
-      >
-        <span className="pr-1 text-neutral-500">{protocol}</span>
-        <input
-          autoFocus
-          type="text"
-          placeholder="Enter URL Here"
-          name="url"
-          className="h-full w-full bg-transparent py-3 outline-none"
-          value={url}
-          onChange={handleOnChangeURL}
-          onKeyDown={(e) => e.key === "Enter" && handleGenerateURL()}
+    <main className="relative flex min-h-screen flex-col items-center justify-center bg-gray-900">
+      <div className="absolute inset-0 z-0">
+        <ColorBends
+          colors={["#ff5c7a", "#8a5cff"]}
+          rotation={90}
+          speed={0.2}
+          scale={1}
+          frequency={1}
+          warpStrength={1}
+          mouseInfluence={1}
+          noise={0.2}
+          parallax={0.5}
+          iterations={1}
+          intensity={1}
+          bandWidth={6}
+          transparent
+          autoRotate={0}
         />
-        <button
-          className={cn(
-            "translate-x-px cursor-pointer rounded-full bg-amber-500 px-4 py-3 text-white",
-            (!url ||
-              generateURLMutation.isPending ||
-              Boolean(generateURLMutation.error)) &&
-              "cursor-default bg-neutral-200",
-          )}
+      </div>
+
+      <div className="relative flex w-1/2 max-w-5xl gap-4">
+        {generateURLMutation.isSuccess && (
+          <ShortURL token={generateURLMutation.data.token} />
+        )}
+
+        <URLBar
+          protocol={protocol}
+          url={url}
+          handleOnChangeURL={handleOnChangeURL}
+          handleGenerateURL={handleGenerateURL}
+          error={generateURLMutation.error}
+        />
+
+        <GlassButton
+          label="Shorten"
           onClick={handleGenerateURL}
+          loading={generateURLMutation.isPending}
           disabled={
             !url ||
             generateURLMutation.isPending ||
             Boolean(generateURLMutation.error)
           }
-        >
-          Shorten
-        </button>
+        />
       </div>
-
-      {generateURLMutation.isSuccess && (
-        <a
-          href={`${API_BASE_URL.replace("/api", "")}/${generateURLMutation.data.token}`}
-          className="mt-4 text-white"
-        >{`${API_BASE_URL.replace("/api", "")}/${generateURLMutation.data.token}`}</a>
-      )}
     </main>
   )
 }

@@ -26,6 +26,7 @@ dev = [
 
 [tool.basedpyright]
 reportUnknownVariableType = false
+exclude = ["alembic/**"]
 
 [tool.ruff.lint]
 extend-select = ["I"]

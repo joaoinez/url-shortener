@@ -1,0 +1,51 @@
+name: Lint and test backend
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install uv with caching
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          enable-cache: true
+          python-version-file: backend/.python-version
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Run basedpyright
+        run: uv run basedpyright
+
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install uv with caching
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          enable-cache: true
+          python-version-file: backend/.python-version
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Run tests
+        run: uv run pytest

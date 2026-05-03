@@ -1,11 +1,13 @@
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.url.generate.repository import create_url
+from app.url.generate_url.repository import GenerateURLRepository
 
 
 async def test_redirect_happy_path(client: TestClient, db_session: AsyncSession):
-    url = await create_url("https://example.com", "test-token", db_session)
+    url = await GenerateURLRepository.create_url(
+        "https://example.com", "test-token", db_session
+    )
     token = url.token
 
     response = client.get(f"/{token}", follow_redirects=False)
@@ -15,7 +17,9 @@ async def test_redirect_happy_path(client: TestClient, db_session: AsyncSession)
 
 
 async def test_redirect_invalid_token(client: TestClient, db_session: AsyncSession):
-    _ = await create_url("https://example.com", "test-token", db_session)
+    _ = await GenerateURLRepository.create_url(
+        "https://example.com", "test-token", db_session
+    )
 
     response = client.get("/wrong-token", follow_redirects=False)
 

@@ -8,5 +8,6 @@ class URL(Base):
     __tablename__: str = "url"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    # TODO: This maybe should be renamed to link.
     url: Mapped[str] = mapped_column(String)
     token: Mapped[str] = mapped_column(String(43))

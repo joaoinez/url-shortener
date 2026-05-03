@@ -1,9 +1,13 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.url.repository import get_url
+from app.url.repository import URLRepository
 
 
-async def get_url_from_token(token: str, db_session: AsyncSession):
-    url = await get_url(token, db_session)
+class RedirectService:
+    @staticmethod
+    async def get_url_link_from_token(
+        token: str, db_session: AsyncSession
+    ) -> str | None:
+        url = await URLRepository.get_one_or_from_token(token, db_session)
 
-    return url.url if url else None
+        return url.url if url else None

@@ -20,10 +20,10 @@ async def override_get_db_session():
 
 
 def override_get_settings():
-    return Settings(db_url=TEST_DB_URL)
+    return Settings(db_url=TEST_DB_URL)  # pyright: ignore[reportCallIssue]
 
 
-@pytest_asyncio.fixture(loop_scope="session", scope="session", autouse=True)
+@pytest_asyncio.fixture(scope="function", loop_scope="session", autouse=True)
 async def setup_database():
     async with _engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

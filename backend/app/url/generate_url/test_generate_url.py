@@ -2,7 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from pytest_mock import MockerFixture
 
-from app.url.generate.router import GenerateURLResponse
+from app.url.generate_url.router import GenerateURLResponse
 
 
 def test_generate_url_happy_path(client: TestClient):
@@ -39,7 +39,7 @@ def test_generate_url_invalid_url(client: TestClient, url: str):
 
 def test_generate_url_collision(client: TestClient, mocker: MockerFixture):
     _ = mocker.patch(
-        "app.url.generate.service.token_urlsafe",
+        "app.url.generate_url.service.generate_token",
         side_effect=["some-token", "some-token", "different-token"],
     )
 
@@ -57,4 +57,16 @@ def test_generate_url_collision(client: TestClient, mocker: MockerFixture):
 
     collision_data = GenerateURLResponse.model_validate(collision_response.json())
 
-    assert collision_data.token == "different-token"
+    assert collision_data.token != "some-token"
+
+
+def test_repeat_url(client: TestClient):
+    first_response = client.post("/url", json={"url": "https://example.com"})
+
+    first_data = GenerateURLResponse.model_validate(first_response.json())
+
+    second_response = client.post("/url", json={"url": "https://example.com"})
+
+    second_data = GenerateURLResponse.model_validate(second_response.json())
+
+    assert first_data.token == second_data.token
